@@ -1,12 +1,44 @@
-// @IsAplpha() -- solo letras
+// @IsAlpha() // @IsNotEmpty() // @MinLength() // @MaxLength() // @IsBoolean() // @IsEmpty() // @IsInt() // @IsPositive() // @IsOptional() // @IsNumber()
 
-//@IsNotEmpty() --
+import {
+    IsAlpha,
+    IsBoolean,
+    IsEmpty,
+    IsInt,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsPositive,
+    MaxLength,
+    MinLength,
+} from "class-validator";
 
-// @MinLength()
+export class MascotaCreateDto {
 
-// @MaxLength()
+    @IsAlpha()
+    @IsNotEmpty()
+    @MinLength(3)
+    @MaxLength(10)
+    nombre: string;
 
-// @IsBoolean()
+    @IsInt()
+    @IsNotEmpty()
+    @IsPositive()
+    edad: number;
 
-// @IsEmpty()
+    @IsNumber()
+    @IsInt()
+    @IsNotEmpty()
+    hijos: number;
+
+    @IsBoolean()
+    @IsOptional()
+    castrada?: boolean; //variable opcional dentro de la clase
+
+
+    @IsPositive()
+    @IsNotEmpty()
+    @IsNumber()
+    peso: number;
+}
 
