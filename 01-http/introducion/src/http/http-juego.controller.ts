@@ -1,8 +1,8 @@
-import {BadRequestException, Controller, Delete, Get, Header, HttpCode, Param, Post} from "@nestjs/common";
+import {BadRequestException, Body, Controller, Delete, Get, Header, HttpCode, Param, Post, Query} from "@nestjs/common";
 
 // Definido hasta ahora ----> http://localhost:3001/juegos-http
 
-@Controller('juegos-http')
+@Controller('juegos-http') // esto define que después de :3001/ vaya 'juegos-http'
 
 export class HttpJuegoController {
 
@@ -41,5 +41,41 @@ export class HttpJuegoController {
 
     }
 
+
+    @Get('parametros-consulta')
+    parametrosConsulta(
+        @Query() parametrosDeConsulta
+    ){
+      console.log('Parametros de consulta: ', parametrosDeConsulta);
+      if (parametrosDeConsulta.nombre && parametrosDeConsulta.apellido ){
+          return parametrosDeConsulta.nombre + " " + parametrosDeConsulta.apellido
+      } else {
+          return '= ('
+      }
+    }
+
+
+    @Post('parametros-cuerpo')
+    parametrosCuerpo(
+        @Body() parametrosDeCuerpo
+    ){
+        console.log('Parametros de cuerpo ', parametrosDeCuerpo)
+        return parametrosDeCuerpo
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
