@@ -2,11 +2,13 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import {HttpJuegoModule} from "./http/http-juego.module";
+import {CalcCookiesModule} from "./deber 01/calc-cookies.module";
 
 @Module({
   imports: [
     // Módulos
-      HttpJuegoModule
+      HttpJuegoModule,
+      CalcCookiesModule
   ],
   controllers: [
     // Controladores
