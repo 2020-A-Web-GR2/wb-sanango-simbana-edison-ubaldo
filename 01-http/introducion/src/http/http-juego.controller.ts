@@ -5,6 +5,7 @@ import {
     Delete,
     Get,
     Header,
+    Headers,
     HttpCode,
     Param,
     Post,
@@ -19,7 +20,7 @@ import {validate, ValidationError} from "class-validator"
 
 export class HttpJuegoController {
 
-    //http://localhost:3001/juegos-http/hola
+    //http://localhost:3000/juegos-http/hola
 
     @Get('hola')
     @HttpCode(201)
@@ -40,6 +41,8 @@ export class HttpJuegoController {
     holaDelete(){
         return 'hola DELETE.'
     }
+
+
 
     @Get('/parametros-ruta/:id/nombre/:altura')
     parametrosRutaEjemplo(
@@ -104,6 +107,7 @@ export class HttpJuegoController {
     //                              COOKIES
 
 
+    // INSEGURA
     @Get('guardarCookieInsegura')
     guardarCookieInsegura(
         @Query() parametrosConsulta,
@@ -124,7 +128,57 @@ export class HttpJuegoController {
     }
 
 
+    @Get('guardarCookieSegura')
+    guardarCookieSegura(
+        @Query() parametrosConsulta,
+        @Req() req,
+        @Res() res
+    ){
+        //res.cookie('nombre','valor',
+        res.cookie(
+            'cookieSegura', // nombre
+            'segura', // valor
+            {
+                secure: true
+            }
+        );
 
+        const mensaje = 'OK Seguro';
+        res.send({
+            mensaje
+        });
+    }
+
+
+    @Get('mostrarcookies')
+    mostrarcookies(
+        @Req() req,
+    ){
+        const mensaje = {
+            sinFirmar: req.cookies,
+            firmadas: req.signedCookies
+        }
+
+        return mensaje;
+        //res.send(mensaje)
+    }
+
+
+    @Get('guardarcookiefirmada')
+    guardarcookiefirmada(
+        @Res() res,
+
+        //COMO ACCEDER A LAS CABECERAS
+        @Headers() headers, //cabecera de peticion
+    ){
+        console.log(headers) //se imprimen las cookies
+        res.header('Headers', headers)  //cabecera respuestas
+        res.cookie('cookiefirmada','firmadooooo', {signed:true})
+        const mensaje = {
+            mensaje: 'Cookie firmada y segura OK.'
+        }
+        res.send(mensaje)
+    }
 }
 
 
