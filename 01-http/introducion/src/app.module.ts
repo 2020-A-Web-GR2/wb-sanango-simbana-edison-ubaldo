@@ -3,12 +3,14 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import {HttpJuegoModule} from "./http/http-juego.module";
 import {CalcCookiesModule} from "./deber 01/calc-cookies.module";
+import {UsuarioModule} from "./usuario/usuario.module";
 
 @Module({
   imports: [
     // Módulos
       HttpJuegoModule,
-      CalcCookiesModule
+      CalcCookiesModule,
+      UsuarioModule,
   ],
   controllers: [
     // Controladores
