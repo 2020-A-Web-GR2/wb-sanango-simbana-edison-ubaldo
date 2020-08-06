@@ -6,13 +6,11 @@ import {
     Post,
     Put,
     Query,
-    Headers, BadRequestException, Res, Body, Param, Req, Head
+    Headers, BadRequestException, Res, Body, Param, Req
 } from "@nestjs/common";
 import {ValidationError, validate} from "class-validator";
 import {CalcCookiesCreateDto} from "./dto/calc-cookies.create.dto";
-import {decode} from "querystring";
 
-const cookieParser = require('cookie-parser')
 const cookie = require('cookie');
 
 @Controller('calc-cookies')
@@ -27,6 +25,7 @@ export class CalcCookiesController {
         @Headers() paramHeaders,
         @Query() paramQuery,
         @Res() res,
+        @Req() req,
     ) {
         const datos = new CalcCookiesCreateDto()
         datos.n1 = paramQuery.n1
@@ -41,7 +40,7 @@ export class CalcCookiesController {
                 throw new BadRequestException('Debe ingresar números');
             } else {
                 const operacion = Number(paramQuery.n1) + Number(paramHeaders.n2)
-                this.validacionCookie(paramHeaders, res, operacion)
+                this.validacionCookie(paramHeaders, res, req, operacion)
             }
         }
     }
@@ -56,6 +55,7 @@ export class CalcCookiesController {
         @Body() paramBody,
         @Param()  paramRuta,
         @Res() res,
+        @Req() req,
     ) {
         const datos = new CalcCookiesCreateDto()
         datos.n1 = paramBody.n1
@@ -69,7 +69,7 @@ export class CalcCookiesController {
                 throw new BadRequestException('Debe ingresar números');
             } else {
                 const operacion = Number(paramBody.n1) - Number(paramRuta.n2)
-                this.validacionCookie(paramHeaders, res, operacion)
+                this.validacionCookie(paramHeaders, res, req, operacion)
 
             }
         }
@@ -83,7 +83,8 @@ export class CalcCookiesController {
     async multiplicacion(
         @Headers() paramHeaders,
         @Body() paramBody,
-        @Res() res
+        @Res() res,
+        @Req() req,
     ) {
         const datos = new CalcCookiesCreateDto()
         datos.n1 = paramHeaders.n1
@@ -98,7 +99,7 @@ export class CalcCookiesController {
                 throw new BadRequestException('Debe ingresar números');
             } else {
                 const operacion = Number(paramHeaders.n1) * Number(paramBody.n2)
-                this.validacionCookie(paramHeaders, res, operacion)
+                this.validacionCookie(paramHeaders, res, req, operacion)
             }
         }
     }
@@ -107,12 +108,13 @@ export class CalcCookiesController {
     //RUTA (n1)
     //QUERY(N2)
     @Post('division/:n1')
-    @HttpCode(201 && this.nombre)
+    @HttpCode(201)
     async division(
         @Headers() paramHeaders,
         @Param() paramRuta,
         @Query() paramQuery,
-        @Res() res
+        @Res() res,
+        @Req() req,
     ) {
         const datos = new CalcCookiesCreateDto()
         datos.n1 = paramRuta.n1
@@ -131,25 +133,25 @@ export class CalcCookiesController {
                 throw new BadRequestException('Debe ingresar números');
             } else {
                 const operacion = Number(paramRuta.n1) / Number(paramQuery.n2)
-                this.validacionCookie(paramHeaders, res, operacion)
+                this.validacionCookie(paramHeaders, res, req, operacion)
             }
         }
     }
 
 
-    validacionCookie(@Headers() paramHeaders, @Res() res, operacion) {
-        const mensajeOperacion = 'El resultado de la operacion es: ' + operacion
+    validacionCookie(@Headers() paramHeaders, @Res() res, @Req() req, operacion) {
 
-        var desencriptado = cookie.parse(paramHeaders.cookie)
-        desencriptado = desencriptado.valor.split(':')[1].split('.')
-        const resultado = Number(desencriptado[0]) - Math.abs(operacion)
-        var mensajeValorCookie = ''
+        const mensajeOperacion = 'El resultado de la operacion es: ' + operacion
+        const nombre = cookie.parse(paramHeaders.cookie)["nombre"]
+        const valor = req.signedCookies
+        const resultado = Number(valor['valor']) - Math.abs(operacion)
+        let mensajeValorCookie
         if (resultado <= 0) {
             this.puntaje(res, 100)
-            mensajeValorCookie = 'Se acabaron sus puntos. Se le han reasignado 100 puntos.'
+            mensajeValorCookie = nombre + ', has terminado tus puntos. Se te han reasignado 100 puntos.'
         } else {
             this.puntaje(res, resultado)
-            mensajeValorCookie = 'Le quedan ' + resultado + ' puntos.'
+            mensajeValorCookie = nombre +  ' te quedan ' + resultado + ' puntos.'
         }
 
         res.send({mensajeOperacion, mensajeValorCookie});
@@ -195,13 +197,16 @@ export class CalcCookiesController {
     @Get('mostrarcookies')
     mostrarcookies(
         @Req() req,
+        @Res() res,
     ) {
         const mensaje = {
             sinFirmar: req.cookies,
             firmadas: req.signedCookies
         }
 
-        return mensaje;
+        res.send({
+            mensaje
+        });
     }
 
 
