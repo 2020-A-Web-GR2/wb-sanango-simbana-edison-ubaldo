@@ -6,17 +6,17 @@ import {
     Post,
     Put,
     Query,
-    Headers, BadRequestException, Res, Body, Param
+    Headers, BadRequestException, Res, Body, Param, Req
 } from "@nestjs/common";
-import {ValidationError,validate} from "class-validator";
+import {ValidationError, validate} from "class-validator";
 import {CalcCookiesCreateDto} from "./dto/calc-cookies.create.dto";
-import {Observable} from "rxjs";
+
+const cookie = require('cookie');
 
 @Controller('calc-cookies')
 
 export class CalcCookiesController {
 
-    nombre = ''
     //QUERY (n1)
     //HEADERS (n2)
     @Get('sumar')
@@ -25,30 +25,26 @@ export class CalcCookiesController {
         @Headers() paramHeaders,
         @Query() paramQuery,
         @Res() res,
-    ){
-        console.log('estos son los headers:',paramHeaders.cookie)
-        const operacion = new CalcCookiesCreateDto()
-        operacion.n1 = paramQuery.n1
-        operacion.n2 = paramHeaders.n2
+        @Req() req,
+    ) {
+        const datos = new CalcCookiesCreateDto()
+        datos.n1 = paramQuery.n1
+        datos.n2 = paramHeaders.n2
 
-        const errores: ValidationError[] = await validate(operacion)
+        const errores: ValidationError[] = await validate(datos)
 
-
-        if (paramHeaders.cookie === undefined){
+        if (paramHeaders.cookie === undefined) {
             throw new BadRequestException('Debe ingresar un nombre de usuario en la cookie insegura y no firmada')
         } else {
-            if(errores.length > 0){
+            if (errores.length > 0) {
                 throw new BadRequestException('Debe ingresar números');
             } else {
-                console.log('headers', paramHeaders)
-                const resultado = Number(paramQuery.n1) + Number(paramHeaders.n2)
-                res.send({
-                    resultado
-                });
+                const operacion = Number(paramQuery.n1) + Number(paramHeaders.n2)
+                this.validacionCookie(paramHeaders, res, req, operacion)
             }
         }
-
     }
+
 
     //BODY (n1)
     //RUTA (n2)
@@ -59,22 +55,22 @@ export class CalcCookiesController {
         @Body() paramBody,
         @Param()  paramRuta,
         @Res() res,
-    ){
-        const operacion = new CalcCookiesCreateDto()
-        operacion.n1 = paramBody.n1
-        operacion.n2 = paramRuta.n2
+        @Req() req,
+    ) {
+        const datos = new CalcCookiesCreateDto()
+        datos.n1 = paramBody.n1
+        datos.n2 = paramRuta.n2
 
-        const errores: ValidationError[] = await validate(operacion)
-        if (paramHeaders.cookie === undefined){
+        const errores: ValidationError[] = await validate(datos)
+        if (paramHeaders.cookie === undefined) {
             throw new BadRequestException('Debe ingresar un nombre de usuario en la cookie insegura y no firmada');
         } else {
-            if(errores.length > 0 ){
+            if (errores.length > 0) {
                 throw new BadRequestException('Debe ingresar números');
             } else {
-                const resultado = Number(paramBody.n1) - Number(paramRuta.n2)
-                res.send({
-                    resultado
-                });
+                const operacion = Number(paramBody.n1) - Number(paramRuta.n2)
+                this.validacionCookie(paramHeaders, res, req, operacion)
+
             }
         }
     }
@@ -87,24 +83,23 @@ export class CalcCookiesController {
     async multiplicacion(
         @Headers() paramHeaders,
         @Body() paramBody,
-        @Res() res
-    ){
-        const operacion = new CalcCookiesCreateDto()
-        operacion.n1 = paramHeaders.n1
-        operacion.n2 = paramBody.n2
+        @Res() res,
+        @Req() req,
+    ) {
+        const datos = new CalcCookiesCreateDto()
+        datos.n1 = paramHeaders.n1
+        datos.n2 = paramBody.n2
 
-        const errores: ValidationError[] = await validate(operacion)
+        const errores: ValidationError[] = await validate(datos)
 
-        if (paramHeaders.cookie === undefined){
+        if (paramHeaders.cookie === undefined) {
             throw new BadRequestException('Debe ingresar un nombre de usuario en la cookie insegura y no firmada');
         } else {
-            if(errores.length > 0 && this.nombre){
+            if (errores.length > 0) {
                 throw new BadRequestException('Debe ingresar números');
             } else {
-                const resultado = Number(paramHeaders.n1) * Number(paramBody.n2)
-                res.send({
-                    resultado
-                });
+                const operacion = Number(paramHeaders.n1) * Number(paramBody.n2)
+                this.validacionCookie(paramHeaders, res, req, operacion)
             }
         }
     }
@@ -113,35 +108,53 @@ export class CalcCookiesController {
     //RUTA (n1)
     //QUERY(N2)
     @Post('division/:n1')
-    @HttpCode(201 && this.nombre)
+    @HttpCode(201)
     async division(
         @Headers() paramHeaders,
         @Param() paramRuta,
         @Query() paramQuery,
-        @Res() res
-    ){
-        const operacion = new CalcCookiesCreateDto()
-        operacion.n1 = paramRuta.n1
-        operacion.divisor = paramQuery.n2
+        @Res() res,
+        @Req() req,
+    ) {
+        const datos = new CalcCookiesCreateDto()
+        datos.n1 = paramRuta.n1
+        datos.divisor = paramQuery.n2
 
-        const errores: ValidationError[] = await validate(operacion)
+        const errores: ValidationError[] = await validate(datos)
 
-        if (paramHeaders.cookie === undefined){
+        if (paramHeaders.cookie === undefined) {
             throw new BadRequestException('Debe ingresar un nombre de usuario en la cookie insegura y no firmada');
         } else {
-            if(errores.length > 0 ){
-                if(errores[0].value == '0'){
+            if (errores.length > 0) {
+                if (errores[0].value == '0') {
                     throw new BadRequestException('El divisor no puede ser 0');
                 }
-                console.error('e',errores)
+                console.error('e', errores)
                 throw new BadRequestException('Debe ingresar números');
             } else {
-                const resultado = Number(paramRuta.n1) / Number(paramQuery.n2)
-                res.send({
-                    resultado
-                });
+                const operacion = Number(paramRuta.n1) / Number(paramQuery.n2)
+                this.validacionCookie(paramHeaders, res, req, operacion)
             }
         }
+    }
+
+
+    validacionCookie(@Headers() paramHeaders, @Res() res, @Req() req, operacion) {
+
+        const mensajeOperacion = 'El resultado de la operacion es: ' + operacion
+        const nombre = cookie.parse(paramHeaders.cookie)["nombre"]
+        const valor = req.signedCookies
+        const resultado = Number(valor['valor']) - Math.abs(operacion)
+        let mensajeValorCookie
+        if (resultado <= 0) {
+            this.puntaje(res, 100)
+            mensajeValorCookie = nombre + ', has terminado tus puntos. Se te han reasignado 100 puntos.'
+        } else {
+            this.puntaje(res, resultado)
+            mensajeValorCookie = nombre +  ' te quedan ' + resultado + ' puntos.'
+        }
+
+        res.send({mensajeOperacion, mensajeValorCookie});
     }
 
 
@@ -151,18 +164,50 @@ export class CalcCookiesController {
         @Headers() headers,
         @Query() paramQuery,
         @Res() res
-    ){
-        //console.log(headers)
+    ) {
+        console.log(headers)
         res.header('Headers', headers)
         res.cookie(
             'nombre',
             paramQuery.nombre,
         );
+        try {
+            const puntaje = 100
+            this.puntaje(res, puntaje)
+            const mensaje = 'Cookie insegura no firmada -> ' + paramQuery.nombre
+            const valor = 'Cookie insegura firmada -> ' + puntaje
+            res.send({
+                mensaje,
+                valor
+            })
+        } catch (e) {
+            console.error('Error al guardar las cookies.')
+        }
 
-        const mensaje = 'Cookie insegura y no firmada "'+ paramQuery.nombre + '" guardada.'
+
+    }
+
+    puntaje(
+        @Res() res,
+        valor
+    ) {
+        res.cookie('valor', valor, {signed: true})
+    }
+
+    @Get('mostrarcookies')
+    mostrarcookies(
+        @Req() req,
+        @Res() res,
+    ) {
+        const mensaje = {
+            sinFirmar: req.cookies,
+            firmadas: req.signedCookies
+        }
+
         res.send({
             mensaje
         });
     }
+
 
 }
