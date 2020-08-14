@@ -1,4 +1,17 @@
-import {Body, Controller, Delete, Get, Param, Post, Put} from "@nestjs/common";
+import {
+    BadRequestException,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    InternalServerErrorException, NotFoundException,
+    Param,
+    Post,
+    Put
+} from "@nestjs/common";
+import {UsuarioService} from "./usuario.service";
+import {UsuarioCreateDto} from "./dto/usuario.create-dto";
+import {validate, ValidationError} from "class-validator";
 
 
 @Controller('usuario')
@@ -20,34 +33,86 @@ export class UsuarioController {
     ]
     idActual = 3
 
+
+    constructor(
+        private readonly _usuarioService: UsuarioService
+    ) {
+    }
+
+
     @Get()
-    mostrarTodos(){
-        return this.arregloUsuarios
+    async mostrarTodos(){
+        try{
+            const respuesta = await this._usuarioService.buscarTodos()
+            return respuesta
+        }catch (e){
+            console.error(e)
+            throw new InternalServerErrorException({
+                mensaje: 'Error del servicio',
+            })
+        }
     }
 
     @Post()
-    crearUno(
+    async crearUno(
         @Body() paramBody
     ){
-        const nuevoUsuario = {
-            id:this.idActual+1,
-            nombre: paramBody.nombre
-        }
+        try{
+            const usuarioValidado = new UsuarioCreateDto()
+            //usuarioValidado.id = paramBody.id
+            usuarioValidado.nombre = paramBody.nombre
+            usuarioValidado.apellido = paramBody.apellido
+            usuarioValidado.cedula = paramBody.cedula
+            usuarioValidado.sueldo = paramBody.sueldo
+            usuarioValidado.fechaNacimiento = paramBody.fechaNacimiento
+            usuarioValidado.fechaHoraNacimiento = paramBody.fechaHoraNacimiento
 
-        this.arregloUsuarios.push(nuevoUsuario)
-        this.idActual += 1
-        return nuevoUsuario
+            const errores: ValidationError[] = await validate(usuarioValidado)
+
+            if(errores.length > 0 ){
+                console.error('Errores: ', errores);
+                throw new BadRequestException({
+                    mensaje: 'Error en el formato de los datos'
+                });
+            }else {
+                try {
+                    const respuesta = await this._usuarioService.crearUno(paramBody);
+                    return respuesta;
+                } catch (e) {
+                    throw new BadRequestException({
+                        mensaje: 'Error al Crear Uno'
+                    })
+                }
+            }
+        }catch (e){
+            console.error(e)
+            throw new BadRequestException({
+                mensaje: 'Error al validar datos'
+            })
+        }
     }
 
     @Get(':id')
-    verUno(
+    async verUno(
         @Param() paramRuta
     ){
-        const indice = this.arregloUsuarios.findIndex(
-            (usuario) => usuario.id === Number(paramRuta.id)
-        )
+        let respuesta
+        try{
+            respuesta = await this._usuarioService.buscarUno(Number(paramRuta.id))
+        } catch(e){
+            console.error(e)
+            throw new BadRequestException({
+                mensaje: 'Error validando datos'
+            })
+        }
 
-        return this.arregloUsuarios[indice]
+        if(respuesta){
+            return respuesta
+        } else {
+            throw  new NotFoundException({
+                mensaje: 'No existen registros'
+            })
+        }
     }
 
 
