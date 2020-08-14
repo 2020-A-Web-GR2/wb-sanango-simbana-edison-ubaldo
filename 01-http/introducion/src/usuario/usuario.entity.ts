@@ -7,10 +7,10 @@ import {Column, Entity, Index, PrimaryGeneratedColumn} from "typeorm";
     'fechaNacimiento'
 ])
 
-@Index(
-    ['nombre','apellido','cedula'], //indice compuesto, si un registro tiene la misma combinacion de nombre apellido y cedula no se guardará ya que debe ser único
-    {unique: true}
-    )
+//@Index(
+//    ['nombre','apellido','cedula'], //indice compuesto, si un registro tiene la misma combinacion de nombre apellido y cedula no se guardará ya que debe ser único
+//    {unique: true}
+//    )
 
     // @ts-ignore
 @Entity('db_usuario') // nombre de la tabla
@@ -51,7 +51,7 @@ export class UsuarioEntity {
         type: "decimal",
         precision: 10, // enteros
         scale: 4, // decimales
-        nullable: false,
+        nullable: true,
     })
     sueldo?: number
 

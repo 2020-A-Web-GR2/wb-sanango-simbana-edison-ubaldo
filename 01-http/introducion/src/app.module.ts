@@ -24,7 +24,7 @@ import {UsuarioEntity} from "./usuario/usuario.entity";
           entities: [ // Descritas las entidades a las cuales me voy a conectar
               UsuarioEntity
           ],
-          synchronize: false, // actualiza el esquema de la DB
+          synchronize: true, // actualiza el esquema de la DB
           dropSchema: false // eliminar los datos y el esquema de base de datos
       }),
   ],
