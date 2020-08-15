@@ -12,6 +12,7 @@ import {
 import {UsuarioService} from "./usuario.service";
 import {UsuarioCreateDto} from "./dto/usuario.create-dto";
 import {validate, ValidationError} from "class-validator";
+import {assignCustomParameterMetadata} from "@nestjs/common/utils/assign-custom-metadata.util";
 
 
 @Controller('usuario')
@@ -79,8 +80,8 @@ export class UsuarioController {
                     const respuesta = await this._usuarioService.crearUno(paramBody);
                     return respuesta;
                 } catch (e) {
-                    throw new BadRequestException({
-                        mensaje: 'Error al Crear Uno'
+                    throw new InternalServerErrorException({
+                        mensaje: 'Error del servicio',
                     })
                 }
             }
@@ -116,30 +117,49 @@ export class UsuarioController {
     }
 
 
+
     @Put(':id')
-    editarUno(
+    async editarUno(
         @Param() paramRuta,
         @Body() paramBody,
     ){
-        const indice = this.arregloUsuarios.findIndex(
-            (usuario) => usuario.id === Number(paramRuta.id)
-        )
+        const id = Number(paramRuta.id)
+        const usuarioEditado = paramBody
 
-        this.arregloUsuarios[indice].nombre = paramBody.nombre;
-        return this.arregloUsuarios[indice]
+        usuarioEditado.id = id
+
+        try{
+            const respuesta = await this._usuarioService.editarUno(usuarioEditado)
+            return respuesta
+        } catch(e){
+            console.error(e)
+            throw new BadRequestException({
+                mensaje: 'Error del servidor'
+            })
+        }
+
     }
 
 
     @Delete(':id')
-    eliminarUno(
+    async eliminarUno(
         @Param() paramRuta
     ){
-        const indice = this.arregloUsuarios.findIndex(
-            (usuario) => usuario.id === Number(paramRuta.id)
-        )
 
-        this.arregloUsuarios.splice(indice,1)
-        return this.arregloUsuarios[indice]
+        const id = Number(paramRuta.id)
+
+        try{
+            const respuesta = await this._usuarioService.eliminarUno(id)
+            return {
+                mensaje: 'Registro con id ' + id + ' eliminado.'
+            }
+
+        } catch (e){
+            console.error(e)
+            throw new BadRequestException({
+                mensaje: 'Error del servidor'
+            })
+        }
     }
 
 }
