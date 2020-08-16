@@ -11,8 +11,6 @@ import {
 
 
 export class UsuarioCreateDto{
-
-
     /* @IsNotEmpty()
     @IsPositive()
     @IsNumber()
@@ -32,12 +30,12 @@ export class UsuarioCreateDto{
     cedula:string     //revisar la validacion del unique
 
     @IsOptional()
-    @IsDecimal()  // como validar la precision y escala
-    sueldo?:number
-
+    @IsNumberString()
+    @IsDecimal({'decimal_digits': '0,4'} ) // como validar la precision y escala
+    sueldo?:string
 
     @IsOptional()
-    @IsDate() // diferenciar entre date y datetime
+    @IsDateString() // diferenciar entre date y datetime
     fechaNacimiento?:string
 
     @IsOptional()
