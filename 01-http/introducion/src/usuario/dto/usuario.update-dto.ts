@@ -3,40 +3,39 @@ import {
     IsDateString,
     IsDecimal,
     IsNotEmpty,
-    IsNumber,
+    IsNumber, IsNumberString,
     IsOptional,
     IsPositive,
     MaxLength
 } from "class-validator";
 
-
-export class usuarioUpdateDto{
-
+export class UsuarioUpdateDto {
 
     @IsNotEmpty()
     @IsPositive()
     @IsNumber()
     id:number
 
-    @MaxLength(10)
+    @MaxLength(60)
     @IsOptional()
     nombre?:string
 
-    @MaxLength(10)
+    @MaxLength(60)
     @IsOptional()
     apellido?:string
 
     @IsNotEmpty()
     @MaxLength(18)
+    @IsNumberString()
     cedula:string     //revisar la validacion del unique
 
     @IsOptional()
-    @IsDecimal()  // como validar la precision y escala
-    sueldo?:number
-
+    @IsNumberString()
+    @IsDecimal({'decimal_digits': '0,4'} ) // como validar la precision y escala
+    sueldo?:string
 
     @IsOptional()
-    @IsDate() // diferenciar entre date y datetime
+    @IsDateString() // diferenciar entre date y datetime
     fechaNacimiento?:string
 
     @IsOptional()
