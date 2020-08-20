@@ -13,8 +13,6 @@ export class MascotaEntity{
     @Column()
     nombre:string;
 
-
-
     // RELACIONES
 
     // Mascota Usuario

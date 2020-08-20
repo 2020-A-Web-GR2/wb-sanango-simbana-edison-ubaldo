@@ -85,15 +85,6 @@ export class UsuarioEntity {
     )
     mascotas: MascotaEntity[]
 
-
-
-
-
-
-
-
-
-
 }
 
 
