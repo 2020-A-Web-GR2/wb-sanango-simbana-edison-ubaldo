@@ -7,7 +7,7 @@ import {
     InternalServerErrorException, NotFoundException,
     Param,
     Post,
-    Put
+    Put, Res
 } from "@nestjs/common";
 import {UsuarioService} from "./usuario.service";
 import {UsuarioCreateDto} from "./dto/usuario.create-dto";
@@ -15,6 +15,7 @@ import {validate, ValidationError} from "class-validator";
 import {assignCustomParameterMetadata} from "@nestjs/common/utils/assign-custom-metadata.util";
 import {UsuarioUpdateDto} from "./dto/usuario.update-dto";
 import {UsuarioEntity} from "./usuario.entity";
+import {MascotaService} from "../mascota/mascota.service";
 
 
 @Controller('usuario')
@@ -38,7 +39,8 @@ export class UsuarioController {
 
 
     constructor(
-        private readonly _usuarioService: UsuarioService
+        private readonly _usuarioService: UsuarioService,
+        private readonly _mascotaService: MascotaService
     ) {
     }
 
@@ -204,6 +206,59 @@ export class UsuarioController {
                 mensaje: 'Error del servidor'
             })
         }
+    }
+
+
+    @Post('crearUsuarioYmascota')
+    async crearUsuarioMascota(
+        @Body() paramBody,
+    ) {
+        const usuario = paramBody.usuario
+        // validar usuario dto
+        const mascota = paramBody.mascota
+        // validar mascota dto
+        let usuarioCreado
+        try {
+            usuarioCreado = await this._usuarioService.crearUno(usuario)
+            let mascotaCreada
+            try {
+                mascota.usuario = usuarioCreado.id
+                mascotaCreada = await this._mascotaService.crearNuevaMascota(mascota)
+                if (mascotaCreada) {
+                    return {
+                        mascota: mascotaCreada,
+                        usuario: usuarioCreado
+                    }
+                } else {
+                    throw new InternalServerErrorException({
+                        mensaje: 'Error en el servidor'
+                    })
+                }
+            } catch (e) {
+                console.error(e)
+                throw new InternalServerErrorException({
+                    mensaje: 'Error creando mascota'
+                })
+            }
+        } catch (e) {
+            console.error(e)
+            throw new InternalServerErrorException({
+                mensaje: 'Error creando usuario'
+            })
+        }
+    }
+
+
+    @Get('vista/usuario')
+    vistaUsuario(
+        @Res() res
+    ) {
+        const nombreControlador = 'Edison'
+        res.render(
+            'ejemplo', // nombre de la vista - sin el .ejs
+            {  // parametros de la vista
+                nombre: nombreControlador
+            })
     }
 
 }
