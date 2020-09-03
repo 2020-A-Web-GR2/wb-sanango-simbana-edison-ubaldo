@@ -255,11 +255,53 @@ export class UsuarioController {
     ) {
         const nombreControlador = 'Edison'
         res.render(
-            'ejemplo', // nombre de la vista - sin el .ejs
+            'usuario/ejemplo', // nombre de la vista - sin el .ejs
             {  // parametros de la vista
                 nombre: nombreControlador
             })
     }
+
+    @Get('vista/faq')
+    vistaFaq(
+        @Res() res
+    ) {
+        res.render('usuario/faq') // nombre de la vista - sin el .ejs
+    }
+
+    @Get('vista/login')
+    vistaLogin(
+        @Res() res
+    ) {
+        res.render('usuario/login') // nombre de la vista - sin el .ejs
+    }
+
+    @Get('vista/inicio')
+    async vistaInicio(
+        @Res() res
+    ) {
+        let resultadoEncontrado
+        try {
+            resultadoEncontrado = await this._usuarioService.buscarTodos()
+        } catch(error){
+            throw new InternalServerErrorException('Error encontrando usuarios')
+        }
+
+        if(resultadoEncontrado){
+            res.render('usuario/inicio', {arregloUsuarios: resultadoEncontrado}) // con esto mando resultadoEcontrado hasta usuario/inicio
+        } else {
+            throw new NotFoundException('NO se encontraron usuarios')
+        }
+
+    }
+
+
+    @Get('vista/crear')
+    vistaCrearUsuario(
+        @Res() res
+    ) {
+        res.render('usuario/crear')
+    }
+
 
 }
 
