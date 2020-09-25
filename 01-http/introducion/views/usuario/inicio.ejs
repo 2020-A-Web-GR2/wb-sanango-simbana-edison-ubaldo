@@ -32,6 +32,16 @@
 <% if(typeof parametrosConsulta != 'undefined') { %>
 <p> MENSAJE: <%= parametrosConsulta.mensaje%></p>
 <% } %>
+
+<form action="/usuario/vista/inicio" method="get">
+    <label for="busqueda">Busqueda:</label>
+    <input id="busqueda" type="text" name="busqueda">
+    <button>Buscar</button>
+</form>
+
+
+
+
 <table>
     <tr>
         <th>Nombre</th>

@@ -1,3 +1,5 @@
+
+
 <%- include('../compartido/estilos-generales/estilos-generales-component') %>
 <%- include('../compartido/menu/menu-component') %>
 
@@ -25,7 +27,7 @@
 <% }%>
 
 <% if(typeof error != 'undefined'){%>
-    <p> MENSAJE: <%= error %></p>    <% const existeApellido = typeof apellido !== 'undefined'%>
+    <p> MENSAJE: <%= error %></p>
 <% }%>
 
 <form action=" <%= existeUsuario ? '/usuario/editarDesdeVista/' + usuario.id : '/usuario/crearDesdeVista'%> " method="POST">
