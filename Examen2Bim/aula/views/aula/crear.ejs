@@ -1,0 +1,146 @@
+<!doctype html>
+
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <title>Aula</title>
+
+</head>
+
+<body>
+
+<%- include('../compartido/menu/cabecera'); -%>
+
+
+<% const existeAula = typeof aula != 'undefined' %>
+
+<% if(existeAula) { %>
+    <% numero = aula.numero %>
+    <% piso = aula.piso %>
+    <% conserje = aula.conserje %>
+    <% recursos = aula.recursos %>
+    <% novedades = aula.novedades %>
+    <% id = aula.aulaId %>
+
+<% } %>
+
+<div class="form-row">
+
+    <div class="col-md-11 ml-auto mr-auto">
+        <div class="form-row">
+            <div class="form-group col-md-8 mr-auto ml-auto">
+                <br>
+                <h1><span class="badge badge-warning"> <%= existeAula ? 'Editar' : 'Registro Nueva' %> Aula</span></h1>
+                <br>
+            </div>
+        </div>
+
+        <form action=" <%= existeAula ? '/aula/editar/' + id : '/aula/crear' %>" method="post">
+
+            <div class="form-row">
+                <div class="form-group col-md-8 mr-auto ml-auto">
+                    <span class="badge badge-pill badge-warning">Numero del Aula (*):</span>
+                    <input id="numero"
+                           class="form-control"
+                           type="number"
+                           name="numero"
+                           required
+                           value="<%= existeAula ? numero : '' %>">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-8 mr-auto ml-auto">
+                    <span class="badge badge-pill badge-warning">Piso (*):</span>
+                    <input class="form-control"
+                           id="piso"
+                           type="number"
+                           required
+                           name="piso"
+                           value="<%= existeAula ? piso : '' %>">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-8 mr-auto ml-auto">
+                    <span class="badge badge-pill badge-warning">Conserje (*):</span>
+                    <input class="form-control"
+                           id="conserje"
+                           type="text"
+                           name="conserje"
+                           required
+                           value="<%= existeAula ? conserje : '' %>">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group col-md-8 mr-auto ml-auto">
+                    <span class="badge badge-pill badge-warning">Recursos (*):</span>
+                    <input class="form-control"
+                              id="recursos"
+                              type="text"
+                              name="recursos"
+                              value="<%= existeAula ? recursos : '' %>">
+                </div>
+            </div>
+
+
+            <div class="form-row">
+                <div class="form-group col-md-8 mr-auto ml-auto">
+                    <span class="badge badge-pill badge-warning">Novedades:</span>
+                    <input class="form-control"
+                              id="novedades"
+                              name="novedades"
+                              type="text"
+                              value="<%= existeAula ? novedades : '' %>">
+                </div>
+            </div>
+
+
+            <div class="form-row">
+                <br>
+                <div class="form-group col-md-8 mr-auto ml-auto">
+                    <br>
+                    <button type="submit"
+                            class="btn btn-warning btn-lg btn-block"><%= existeAula ? 'EDITAR' : 'CREAR' %></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<% if(typeof error != 'undefined'){ %>
+    <br>
+    <div class="ml-0 mr-0">
+        <div class="form-group col-lg-12 mx-auto mb-0">
+            <div class="alert alert-danger" role="alert">
+                <%= error %>
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
+
+
+
+
+
