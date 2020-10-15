@@ -1,0 +1,139 @@
+<!doctype html>
+
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+          integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+
+    <title>Aula - Inicio</title>
+
+</head>
+
+<body>
+
+<%- include('../compartido/menu/cabecera'); -%>
+
+
+<br>
+<br>
+<!-- BUSQUEDA-->
+<div class="col-md-12 col-lg-12 ml-auto">
+    <div class="row">
+        <div class=" col-md-12 col-lg-6">
+            <form action="/aula/vista/inicio" method="get">
+                <div class="input-group-prepend">
+                    <span class="input-group-text bg-white px-4 border-md border-right-0">
+                        <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-search" fill="currentColor"
+                             xmlns="http://www.w3.org/2000/svg">
+                            <path fill-rule="evenodd"
+                                  d="M10.442 10.442a1 1 0 0 1 1.415 0l3.85 3.85a1 1 0 0 1-1.414 1.415l-3.85-3.85a1 1 0 0 1 0-1.415z"/>
+                            <path fill-rule="evenodd"
+                                  d="M6.5 12a5.5 5.5 0 1 0 0-11 5.5 5.5 0 0 0 0 11zM13 6.5a6.5 6.5 0 1 1-13 0 6.5 6.5 0 0 1 13 0z"/>
+                        </svg>
+                    </span>
+
+                    <input id="busqueda" type="text" name="busqueda" placeholder="Buscar"
+                           class="form-control bg-white border-left-0 border-md">
+                    <button type="submit" class="btn btn-warning">BUSCAR</button>
+
+                </div>
+            </form>
+        </div>
+
+        <div class="input-group col-lg-6 mb-4 ">
+            <a href="/aula/vista/crear" class="btn btn-warning btn-lg btn-block active ml-auto"
+               role="button"
+               aria-pressed="true">
+                <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-plus-circle-fill"
+                     fill="currentColor"
+                     xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd"
+                          d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3v-3z"/>
+                </svg>
+                Nueva Aula
+            </a>
+        </div>
+    </div>
+</div>
+
+<% if(typeof error != 'undefined'){ %>
+    <br>
+    <div class="ml-0 mr-0">
+        <div class="form-group col-lg-12 mx-auto mb-0">
+            <div class="alert alert-danger" role="alert">
+                <%= error %>
+            </div>
+        </div>
+    </div>
+<% } %>
+
+<br>
+
+<% if(arregloAulas.length > 0 ) { %>
+    <table class="table col-md-11 ml-5 mr-auto ">
+        <br>
+        <thead class="btn-info">
+        <tr>
+            <th scope="col">Numero</th>
+            <th scope="col">Piso</th>
+            <th scope="col">Conserje</th>
+            <th scope="col">Recursos</th>
+            <th scope="col">Novedades</th>
+            <th scope="col">Acciones</th>
+        </tr>
+        </thead>
+        <tbody class="mr-auto" style="table-layout: fixed; width: 100%">
+        <% arregloAulas.forEach((objeto) => { %>
+            <tr>
+                <td><%= objeto.numero %></td>
+                <td><%= objeto.piso %></td>
+                <td><%= objeto.conserje %></td>
+                <td><%= objeto.recursos %></td>
+                <td style="word-break:break-all;"><%= objeto.novedades %></td>
+                <td>
+                    <div class="form-row mb-0">
+                        <div class="form-group col-md-6 mb-0">
+                            <a href="/aula/vista/editar/<%= objeto.aulaId %>">
+                                <button class="btn btn-primary btn-block" type="button" aria-expanded="false"
+                                        aria-controls="collapseExample">
+                                    Editar Aula
+                                </button>
+                            </a>
+                        </div>
+                        <div class="form-group col-md-6 mb-0">
+                            <a href="/aula/eliminarDesdeVista/<%= objeto.aulaId %>">
+                                <button class="btn btn-danger btn-block" type="button" aria-expanded="false"
+                                        aria-controls="collapseExample">
+                                    Eliminar Aula
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        <% }) %>
+        </tbody>
+    </table>
+<% } %>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
+        integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
+        crossorigin="anonymous"></script>
+
+</body>
+
+</html>
+
+
+
+
